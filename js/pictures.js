@@ -1,15 +1,21 @@
 'use strict';
 
-var pictureElement = document.querySelector('.big-picture');
-
+var picturePopup = document.querySelector('.big-picture');
 var photosList = document.querySelector('.pictures');
-var photosItemTemplate = document.querySelector('#picture');
+var photosItemTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
+var commentCount = document.querySelector('.social__comment-count');
+var photoLoadmore = document.querySelector('.social__loadmore');
+var commentTemplate = document.querySelector('.social__comment');
 
+// picturePopup.classList.remove('hidden');
+// commentCount.classList.add('visually-hidden');
+// photoLoadmore.classList.add('visually-hidden');
 
 var PHOTOS_AMOUNT = 25;
+var COMMENTS_AMOUNT = 3;
 var min = 15;
 var max = 200;
-var i = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+var picArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 
 var PIC_COMMENT = [
   'Всё отлично!',
@@ -29,6 +35,13 @@ var PIC_DESCRIPTION = [
   'Вот это тачка!'
 ];
 
+var pickRandomNoRepeat = function (param) {
+  var shuffled = [];
+  while (param.length) {
+    shuffled.push(param.splice(Math.random * param.length, 1));
+  }
+};
+
 // Функция, возвращающая случайный элемент из массива
 var pickRandomRepeat = function (array) {
   return Math.floor(Math.random() * array.length);
@@ -42,7 +55,7 @@ var pickRandomLike = function (min, max) {
 // Функция, возвращающая объект, описывающий фотографию
 var getPhoto = function () {
   return {
-    url: 'photos/' + pickRandomRepeat(i) + '.jpg',
+    url: 'photos/' + pickRandomRepeat(picArray) + '.jpg',
     likes: pickRandomLike(min, max),
     comments: PIC_COMMENT[pickRandomRepeat(PIC_COMMENT)],
     description: PIC_DESCRIPTION[pickRandomRepeat(PIC_DESCRIPTION)]
@@ -52,18 +65,21 @@ var getPhoto = function () {
 // Функция, возвращающая массив из объекта с фото
 var getPhotoArray = function (param) {
   var photoArray = [];
-  for (var i =0; i < param; i ++) {
+  for (var i =0; i < param; i++) {
     photoArray.push(getPhoto());
   }
   return photoArray;
 };
 
+// Функция отрисовки элемента в блок .pictures
 var renderPhoto = function (param) {
   var photoElement = photosItemTemplate.cloneNode(true);
 
-  photoElement.querySelector('.picture__img').src.textContent = param.url;
+  photoElement.querySelector('.picture__img').src = param.url;
   photoElement.querySelector('.picture__stat--likes').textContent = param.likes;
-  photoElement.querySelector('.picture__stat--comments').textContent = param.comments;
+  photoElement.querySelector('.picture__stat--comments').textContent = param.comments.length;
+
+  return photoElement;
 };
 
 var fragment = document.createDocumentFragment();

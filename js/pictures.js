@@ -42,12 +42,12 @@ var PIC_DESCRIPTION = [
 // Функция, возвращающая случайный элемент из массива
 var pickRandomRepeat = function (array) {
   return Math.floor(Math.random() * array.length);
-}
+};
 
 // Функция, возвращающая случайное целое число от min до max
 var pickRandomLike = function (min, max) {
   return Math.floor(Math.random() * ((max + 1) - min)) + min;
-}
+};
 
 // Функция, возвращающая объект, описывающий фотографию
 var getPhoto = function () {
@@ -62,7 +62,7 @@ var getPhoto = function () {
 // Функция, возвращающая массив из объекта с фото
 var getPhotoArray = function (param) {
   var photoArray = [];
-  for (var i =0; i <= param; i++) {
+  for (var i = 0; i <= param; i++) {
     photoArray.push(getPhoto());
   }
   return photoArray;
@@ -92,14 +92,14 @@ var renderCommentBlock = function (param) {
   picturePopup.querySelector('.likes-count').textContent = param.likes;
   picturePopup.querySelector('.comments-count').textContent = param.comments.length;
 
-  var fragment = document.createDocumentFragment();
+  var fragmentComment = document.createDocumentFragment();
   commentsList.innerHTML = '';
-  for (var i =0; i < COMMENTS_AMOUNT; i++) {
+  for (var c = 0; c < COMMENTS_AMOUNT; c++) {
     var avatarPic = Math.floor(Math.random() * ((maxAvatar + 1) - minAvatar)) + minAvatar;
     var commentElement = commentTemplate.cloneNode(true);
     commentElement.querySelector('.social__picture').src = 'img/avatar-' + avatarPic + '.svg';
     commentElement.querySelector('.social__text').textContent = PIC_COMMENT[pickRandomRepeat(PIC_COMMENT)];
-    fragment.appendChild(commentElement);
+    fragmentComment.appendChild(commentElement);
   }
 
   picturePopup.querySelector('.social__comments').appendChild(fragment);
@@ -109,8 +109,8 @@ var renderCommentBlock = function (param) {
 
 var fragmentPost = document.createDocumentFragment();
 var photoPost = getPhotoArray(COMMENTS_AMOUNT);
-for (var i = 0; i <= COMMENTS_AMOUNT; i++) {
-  fragmentPost.appendChild(renderCommentBlock(photoPost[i]));
+for (var p = 0; p <= COMMENTS_AMOUNT; p++) {
+  fragmentPost.appendChild(renderCommentBlock(photoPost[p]));
 }
 
 picturePopup.appendChild(fragmentPost);

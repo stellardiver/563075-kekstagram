@@ -3,19 +3,23 @@
 var picturePopup = document.querySelector('.big-picture');
 var photosList = document.querySelector('.pictures');
 var photosItemTemplate = document.querySelector('#picture').content.querySelector('.picture__link');
+var commentsList = document.querySelector('.social__comments');
 var commentCount = document.querySelector('.social__comment-count');
 var photoLoadmore = document.querySelector('.social__loadmore');
 var commentTemplate = document.querySelector('.social__comment');
 
-// picturePopup.classList.remove('hidden');
-// commentCount.classList.add('visually-hidden');
-// photoLoadmore.classList.add('visually-hidden');
+picturePopup.classList.remove('hidden');
+commentCount.classList.add('visually-hidden');
+photoLoadmore.classList.add('visually-hidden');
 
 var PHOTOS_AMOUNT = 25;
 var COMMENTS_AMOUNT = 3;
-var min = 15;
-var max = 200;
-var picArray = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
+var minLike = 15;
+var maxLike = 200;
+var minPic = 1;
+var maxPic = 25;
+var minAvatar = 1;
+var maxAvatar = 6;
 
 var PIC_COMMENT = [
   'Всё отлично!',
@@ -35,13 +39,6 @@ var PIC_DESCRIPTION = [
   'Вот это тачка!'
 ];
 
-var pickRandomNoRepeat = function (param) {
-  var shuffled = [];
-  while (param.length) {
-    shuffled.push(param.splice(Math.random * param.length, 1));
-  }
-};
-
 // Функция, возвращающая случайный элемент из массива
 var pickRandomRepeat = function (array) {
   return Math.floor(Math.random() * array.length);
@@ -55,8 +52,8 @@ var pickRandomLike = function (min, max) {
 // Функция, возвращающая объект, описывающий фотографию
 var getPhoto = function () {
   return {
-    url: 'photos/' + pickRandomRepeat(picArray) + '.jpg',
-    likes: pickRandomLike(min, max),
+    url: 'photos/' + pickRandomLike(minPic, maxPic) + '.jpg',
+    likes: pickRandomLike(minLike, maxLike),
     comments: PIC_COMMENT[pickRandomRepeat(PIC_COMMENT)],
     description: PIC_DESCRIPTION[pickRandomRepeat(PIC_DESCRIPTION)]
   };
@@ -65,7 +62,7 @@ var getPhoto = function () {
 // Функция, возвращающая массив из объекта с фото
 var getPhotoArray = function (param) {
   var photoArray = [];
-  for (var i =0; i < param; i++) {
+  for (var i =0; i <= param; i++) {
     photoArray.push(getPhoto());
   }
   return photoArray;
@@ -84,8 +81,36 @@ var renderPhoto = function (param) {
 
 var fragment = document.createDocumentFragment();
 var photos = getPhotoArray(PHOTOS_AMOUNT);
-for (var i = 0; i < PHOTOS_AMOUNT; i++) {
+for (var i = 0; i <= PHOTOS_AMOUNT; i++) {
   fragment.appendChild(renderPhoto(photos[i]));
 }
 
 photosList.appendChild(fragment);
+
+var renderCommentBlock = function (param) {
+  picturePopup.querySelector('.big-picture__img img').src = param.url;
+  picturePopup.querySelector('.likes-count').textContent = param.likes;
+  picturePopup.querySelector('.comments-count').textContent = param.comments.length;
+
+  var fragment = document.createDocumentFragment();
+  commentsList.innerHTML = '';
+  for (var i =0; i < COMMENTS_AMOUNT; i++) {
+    var avatarPic = Math.floor(Math.random() * ((maxAvatar + 1) - minAvatar)) + minAvatar;
+    var commentElement = commentTemplate.cloneNode(true);
+    commentElement.querySelector('.social__picture').src = 'img/avatar-' + avatarPic + '.svg';
+    commentElement.querySelector('.social__text').textContent = PIC_COMMENT[pickRandomRepeat(PIC_COMMENT)];
+    fragment.appendChild(commentElement);
+  }
+
+  picturePopup.querySelector('.social__comments').appendChild(fragment);
+  picturePopup.querySelector('.social__caption').textContent = param.description;
+
+};
+
+var fragmentPost = document.createDocumentFragment();
+var photoPost = getPhotoArray(COMMENTS_AMOUNT);
+for (var i = 0; i <= COMMENTS_AMOUNT; i++) {
+  fragmentPost.appendChild(renderCommentBlock(photoPost[i]));
+}
+
+picturePopup.appendChild(fragmentPost);

@@ -13,7 +13,6 @@ commentCount.classList.add('visually-hidden');
 photoLoadmore.classList.add('visually-hidden');
 
 var PHOTOS_AMOUNT = 25;
-var COMMENTS_AMOUNT = 2;
 
 var PIC_COMMENT = [
   'Всё отлично!',
@@ -40,7 +39,7 @@ var pickRandomInt = function (min, max) {
 
 // Функция, возвращающая случайный элемент из массива
 var pickRandomRepeat = function (array) {
-  return array[pickRandomInt(0, array.length -1)];
+  return array[pickRandomInt(0, (array.length -1))];
 };
 
 // Функция, возвращающая объект, описывающий фотографию

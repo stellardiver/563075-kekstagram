@@ -20,6 +20,8 @@ var minPic = 1;
 var maxPic = 25;
 var minAvatar = 1;
 var maxAvatar = 6;
+var minArrayItem = 0;
+var maxArrayItem = 5;
 
 var PIC_COMMENT = [
   'Всё отлично!',
@@ -39,23 +41,23 @@ var PIC_DESCRIPTION = [
   'Вот это тачка!'
 ];
 
-// Функция, возвращающая случайный элемент из массива
-var pickRandomRepeat = function (array) {
-  return Math.floor(Math.random() * array.length);
-};
-
 // Функция, возвращающая случайное целое число от min до max
-var pickRandomLike = function (min, max) {
+var pickRandomInt = function (min, max) {
   return Math.floor(Math.random() * ((max + 1) - min)) + min;
 };
 
+// Функция, возвращающая случайный элемент из массива
+var pickRandomRepeat = function (array) {
+  return array[pickRandomInt(minArrayItem, maxArrayItem)];
+};
+
 // Функция, возвращающая объект, описывающий фотографию
-var getPhoto = function () {
+var getPhoto = function (i) {
   return {
-    url: 'photos/' + pickRandomLike(minPic, maxPic) + '.jpg',
-    likes: pickRandomLike(minLike, maxLike),
-    comments: PIC_COMMENT[pickRandomRepeat(PIC_COMMENT)],
-    description: PIC_DESCRIPTION[pickRandomRepeat(PIC_DESCRIPTION)]
+    url: 'photos/' + i + '.jpg',
+    likes: pickRandomInt(minLike, maxLike),
+    comments: pickRandomRepeat(PIC_COMMENT),
+    description: pickRandomRepeat(PIC_DESCRIPTION)
   };
 };
 
@@ -63,7 +65,7 @@ var getPhoto = function () {
 var getPhotoArray = function (param) {
   var photoArray = [];
   for (var i = 0; i <= param; i++) {
-    photoArray.push(getPhoto());
+    photoArray.push(getPhoto(i));
   }
   return photoArray;
 };
@@ -74,32 +76,31 @@ var renderPhoto = function (param) {
 
   photoElement.querySelector('.picture__img').src = param.url;
   photoElement.querySelector('.picture__stat--likes').textContent = param.likes;
-  photoElement.querySelector('.picture__stat--comments').textContent = param.comments.length;
+  photoElement.querySelector('.picture__stat--comments').textContent = param.comments;
 
   return photoElement;
 };
 
 var fragment = document.createDocumentFragment();
 var photos = getPhotoArray(PHOTOS_AMOUNT);
-for (var i = 0; i <= PHOTOS_AMOUNT; i++) {
+for (var i = 1; i <= PHOTOS_AMOUNT; i++) {
   fragment.appendChild(renderPhoto(photos[i]));
 }
 
 photosList.appendChild(fragment);
 
 var renderCommentBlock = function (param) {
-  picturePopup.querySelector('.big-picture__img img').src = param.url;
+  picturePopup.querySelector('.big-picture__img img').src = 'photos/' + pickRandomInt(minPic, maxPic) + '.jpg';
   picturePopup.querySelector('.likes-count').textContent = param.likes;
-  picturePopup.querySelector('.comments-count').textContent = param.comments.length;
+  picturePopup.querySelector('.comments-count').textContent = param.comments;
 
-  var fragmentComment = document.createDocumentFragment();
+  var fragment = document.createDocumentFragment();
   commentsList.innerHTML = '';
-  for (var c = 0; c < COMMENTS_AMOUNT; c++) {
-    var avatarPic = Math.floor(Math.random() * ((maxAvatar + 1) - minAvatar)) + minAvatar;
+  for (var i = 0; i < COMMENTS_AMOUNT; i++) {
     var commentElement = commentTemplate.cloneNode(true);
-    commentElement.querySelector('.social__picture').src = 'img/avatar-' + avatarPic + '.svg';
-    commentElement.querySelector('.social__text').textContent = PIC_COMMENT[pickRandomRepeat(PIC_COMMENT)];
-    fragmentComment.appendChild(commentElement);
+    commentElement.querySelector('.social__picture').src = 'img/avatar-' + pickRandomInt(minAvatar, maxAvatar) + '.svg';
+    commentElement.querySelector('.social__text').textContent = pickRandomRepeat(PIC_COMMENT);
+    fragment.appendChild(commentElement);
   }
 
   picturePopup.querySelector('.social__comments').appendChild(fragment);
@@ -109,8 +110,8 @@ var renderCommentBlock = function (param) {
 
 var fragmentPost = document.createDocumentFragment();
 var photoPost = getPhotoArray(COMMENTS_AMOUNT);
-for (var p = 0; p <= COMMENTS_AMOUNT; p++) {
-  fragmentPost.appendChild(renderCommentBlock(photoPost[p]));
+for (var i = 0; i <= COMMENTS_AMOUNT; i++) {
+  fragmentPost.appendChild(renderCommentBlock(photoPost[i]));
 }
 
 picturePopup.appendChild(fragmentPost);

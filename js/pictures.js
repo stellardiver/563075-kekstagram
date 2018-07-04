@@ -13,15 +13,7 @@ commentCount.classList.add('visually-hidden');
 photoLoadmore.classList.add('visually-hidden');
 
 var PHOTOS_AMOUNT = 25;
-var COMMENTS_AMOUNT = 3;
-var minLike = 15;
-var maxLike = 200;
-var minPic = 1;
-var maxPic = 25;
-var minAvatar = 1;
-var maxAvatar = 6;
-var minArrayItem = 0;
-var maxArrayItem = 5;
+var COMMENTS_AMOUNT = 2;
 
 var PIC_COMMENT = [
   'Всё отлично!',
@@ -48,14 +40,14 @@ var pickRandomInt = function (min, max) {
 
 // Функция, возвращающая случайный элемент из массива
 var pickRandomRepeat = function (array) {
-  return array[pickRandomInt(minArrayItem, maxArrayItem)];
+  return array[pickRandomInt(0, array.length -1)];
 };
 
 // Функция, возвращающая объект, описывающий фотографию
 var getPhoto = function (i) {
   return {
-    url: 'photos/' + i + '.jpg',
-    likes: pickRandomInt(minLike, maxLike),
+    url: 'photos/' + (i + 1) + '.jpg',
+    likes: pickRandomInt(15, 200),
     comments: pickRandomRepeat(PIC_COMMENT),
     description: pickRandomRepeat(PIC_DESCRIPTION)
   };
@@ -64,7 +56,7 @@ var getPhoto = function (i) {
 // Функция, возвращающая массив из объекта с фото
 var getPhotoArray = function (param) {
   var photoArray = [];
-  for (var i = 0; i <= param; i++) {
+  for (var i = 0; i < param; i++) {
     photoArray.push(getPhoto(i));
   }
   return photoArray;
@@ -83,34 +75,34 @@ var renderPhoto = function (param) {
 
 var fragment = document.createDocumentFragment();
 var photos = getPhotoArray(PHOTOS_AMOUNT);
-for (var i = 1; i <= PHOTOS_AMOUNT; i++) {
+for (var i = 0; i < PHOTOS_AMOUNT; i++) {
   fragment.appendChild(renderPhoto(photos[i]));
 }
 
 photosList.appendChild(fragment);
 
 var renderCommentBlock = function (param) {
-  picturePopup.querySelector('.big-picture__img img').src = 'photos/' + pickRandomInt(minPic, maxPic) + '.jpg';
+  picturePopup.querySelector('.big-picture__img img').src = param.url;
   picturePopup.querySelector('.likes-count').textContent = param.likes;
   picturePopup.querySelector('.comments-count').textContent = param.comments;
 
-  var fragment = document.createDocumentFragment();
+  var fragmentPopup = document.createDocumentFragment();
   commentsList.innerHTML = '';
-  for (var i = 0; i < COMMENTS_AMOUNT; i++) {
+  for (var i = 0; i < PIC_COMMENT.length; i++) {
     var commentElement = commentTemplate.cloneNode(true);
-    commentElement.querySelector('.social__picture').src = 'img/avatar-' + pickRandomInt(minAvatar, maxAvatar) + '.svg';
+    commentElement.querySelector('.social__picture').src = 'img/avatar-' + (i + 1) + '.svg';
     commentElement.querySelector('.social__text').textContent = pickRandomRepeat(PIC_COMMENT);
-    fragment.appendChild(commentElement);
+    fragmentPopup.appendChild(commentElement);
   }
 
-  picturePopup.querySelector('.social__comments').appendChild(fragment);
+  picturePopup.querySelector('.social__comments').appendChild(fragmentPopup);
   picturePopup.querySelector('.social__caption').textContent = param.description;
 
 };
 
 var fragmentPost = document.createDocumentFragment();
-var photoPost = getPhotoArray(COMMENTS_AMOUNT);
-for (var i = 0; i <= COMMENTS_AMOUNT; i++) {
+var photoPost = getPhotoArray(PHOTOS_AMOUNT);
+for (var i = 0; i < PHOTOS_AMOUNT; i++) {
   fragmentPost.appendChild(renderCommentBlock(photoPost[i]));
 }
 
